@@ -83,7 +83,7 @@ namespace MNIST {
 
                 // save model locally
                 mlContext.Model.Save(model, train.Schema, SCHEMA_MODEL_PATH);
-                Console.WriteLine("Model saved at: " + ENV_SCHEMA_MODEL_PATH));
+                Console.WriteLine("Model saved at: " + ENV_SCHEMA_MODEL_PATH);
                 Console.WriteLine();
 
                 // make predictions on test data

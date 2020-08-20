@@ -14,7 +14,7 @@ namespace MNIST_WF {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new MNIST_Form());
         }
     }
 }
