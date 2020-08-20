@@ -14,7 +14,7 @@ namespace MNIST {
         private static readonly string TEST_DATA_PATH = Path.Combine(Environment.CurrentDirectory, "mnist_test.csv");
 
         // saved schema (model) path
-        private static readonly string SCHEMA_MODEL_PATH = Path.Combine(Environment.CurrentDirectory, "/schema/model.zip");
+        private static readonly string SCHEMA_MODEL_PATH = Path.Combine("schema", "model.zip");
 
         // feature column default name
         private static readonly string DEFAULT_FEATURE_NAME = "Features";
@@ -63,6 +63,9 @@ namespace MNIST {
             watch.Stop();
             Console.WriteLine($"Model took {(watch.ElapsedMilliseconds / 1000.0):#.###} seconds");
             Console.WriteLine();
+
+            // save model locally
+            mlContext.Model.Save(model, train.Schema, SCHEMA_MODEL_PATH);
 
             // make predictions on test data
             Console.WriteLine("Evaluating model...");
