@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 
 namespace MNIST {
-    class Program {
+    public class Program {
 
         // dataset path
         private static readonly string TRAIN_DATA_PATH = Path.Combine(Environment.CurrentDirectory, "mnist_train.csv");
@@ -21,6 +21,14 @@ namespace MNIST {
         private static readonly string DEFAULT_FEATURE_NAME = "Features";
 
         static void Main(string[] args) {
+            Train();
+        }
+
+        /// <summary>
+        /// Returns a trained MLContext model.
+        /// </summary>
+        /// <returns></returns>
+        public static MLContext Train() {
             // MLContext init
             var mlContext = new MLContext();
 
@@ -96,6 +104,8 @@ namespace MNIST {
                 Console.WriteLine($" LogLossReduction: {metrics.LogLossReduction:#.###}");
                 Console.ReadLine();
             }
+
+            return mlContext;
         }
 
         /// <summary>

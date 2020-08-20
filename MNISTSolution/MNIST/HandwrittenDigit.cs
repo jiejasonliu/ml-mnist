@@ -25,4 +25,10 @@ namespace MNIST {
         public float[] PixelData = default;
 
     }
+
+    class HandwrittenDigitPrediction {
+        [ColumnName("Score")]
+        public float PredictedNumber { get; set; }
+    }
+
 }
