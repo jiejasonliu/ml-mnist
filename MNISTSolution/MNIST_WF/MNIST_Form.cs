@@ -38,6 +38,8 @@ namespace MNIST_WF {
         }
 
         private void Evaluate_Click(object sender, EventArgs e) {
+            var bitmap = new BitmapData(bmp);
+            bitmap.HDScale(28, 28);
         }
 
         private void FreeDrawBox_MouseDown(object sender, MouseEventArgs e) {
