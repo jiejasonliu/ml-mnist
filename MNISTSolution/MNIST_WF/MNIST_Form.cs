@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -40,6 +41,8 @@ namespace MNIST_WF {
         private void Evaluate_Click(object sender, EventArgs e) {
             var bitmap = new BitmapData(bmp);
             bitmap.HDScale(28, 28);
+
+            var data = bitmap.ToFloatArray();
         }
 
         private void FreeDrawBox_MouseDown(object sender, MouseEventArgs e) {
