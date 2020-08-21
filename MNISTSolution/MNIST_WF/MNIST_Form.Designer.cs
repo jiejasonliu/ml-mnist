@@ -33,7 +33,7 @@
             // FreeDrawBox
             // 
             this.FreeDrawBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.FreeDrawBox.Location = new System.Drawing.Point(38, 55);
+            this.FreeDrawBox.Location = new System.Drawing.Point(55, 55);
             this.FreeDrawBox.Name = "FreeDrawBox";
             this.FreeDrawBox.Size = new System.Drawing.Size(140, 140);
             this.FreeDrawBox.TabIndex = 0;
@@ -44,7 +44,7 @@
             // 
             // Clear
             // 
-            this.Clear.Location = new System.Drawing.Point(184, 143);
+            this.Clear.Location = new System.Drawing.Point(201, 143);
             this.Clear.Name = "Clear";
             this.Clear.Size = new System.Drawing.Size(75, 23);
             this.Clear.TabIndex = 1;
@@ -54,7 +54,7 @@
             // 
             // Evaluate
             // 
-            this.Evaluate.Location = new System.Drawing.Point(184, 172);
+            this.Evaluate.Location = new System.Drawing.Point(201, 172);
             this.Evaluate.Name = "Evaluate";
             this.Evaluate.Size = new System.Drawing.Size(75, 23);
             this.Evaluate.TabIndex = 1;
@@ -82,7 +82,7 @@
             this.Controls.Add(this.Clear);
             this.Controls.Add(this.FreeDrawBox);
             this.Name = "MNIST_Form";
-            this.Text = "Form1";
+            this.Text = "Machine Learned Digit Recognition (ml-mnist)";
             ((System.ComponentModel.ISupportInitialize)(this.FreeDrawBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
