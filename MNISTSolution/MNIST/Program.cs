@@ -1,45 +1,60 @@
 ﻿using CNTK;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Transforms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace MNIST {
-    public class Program {
+    public class MNISTModel {
+
+        // executable (DLL) folder
+        private static readonly string DLL_DIRECTORY_PATH = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
 
         // dataset path
-        private static readonly string TRAIN_DATA_PATH = Path.Combine(Environment.CurrentDirectory, "mnist_train.csv");
-        private static readonly string TEST_DATA_PATH = Path.Combine(Environment.CurrentDirectory, "mnist_test.csv");
+        public static readonly string TRAIN_DATA_PATH = Path.Combine(DLL_DIRECTORY_PATH, "mnist_train.csv");
+        public static readonly string TEST_DATA_PATH = Path.Combine(DLL_DIRECTORY_PATH, "mnist_test.csv");
 
         // saved schema (model) path
-        private static readonly string SCHEMA_MODEL_PATH = Path.Combine("schema", "model.zip");
-        private static readonly string ENV_SCHEMA_MODEL_PATH = Path.Combine(Environment.CurrentDirectory, SCHEMA_MODEL_PATH);
+        public static readonly string SCHEMA_MODEL_PATH = Path.Combine("schema", "model.zip");
+        public static readonly string ENV_SCHEMA_MODEL_PATH = Path.Combine(DLL_DIRECTORY_PATH, SCHEMA_MODEL_PATH);
 
         // feature column default name
         private static readonly string DEFAULT_FEATURE_NAME = "Features";
+        private static readonly string DEFAULT_LABEL_NAME = "Label";
+
+        /// <summary>
+        /// Public access to context, call <see cref="Train()" /> to populate.
+        /// </summary>
+        public MLContext Context { get; set; }
+
+        /// <summary>
+        /// Public access to generated network, call <see cref="Train()" /> to populate.
+        /// </summary>
+        public ITransformer Transformer { get; set; }
 
         static void Main(string[] args) {
-            Train();
+            MNISTModel model = new MNISTModel();
+            model.Train();
         }
 
         /// <summary>
         /// Returns a trained MLContext model.
         /// </summary>
         /// <returns></returns>
-        public static MLContext Train() {
+        public void Train() {
             // MLContext init
-            var mlContext = new MLContext();
-
-            // neural network declaration
-            ITransformer model;
+            Context = new MLContext();
 
             // try to load existing model
             if (File.Exists(ENV_SCHEMA_MODEL_PATH)) {
                 Console.WriteLine("Found existing model at: " + ENV_SCHEMA_MODEL_PATH);
-                DataViewSchema schema;
-                model = mlContext.Model.Load(SCHEMA_MODEL_PATH, out schema);
+                Transformer = Context.Model.Load(SCHEMA_MODEL_PATH, out _);
             }
             // train model normally
             else {
@@ -50,50 +65,59 @@ namespace MNIST {
                 };
 
                 // create IDataView object
-                var train = LoadDataView(mlContext, TRAIN_DATA_PATH, columnDefinition);
-                var test = LoadDataView(mlContext, TEST_DATA_PATH, columnDefinition);
+                var train = LoadDataView(Context, TRAIN_DATA_PATH, columnDefinition);
+                var test = LoadDataView(Context, TEST_DATA_PATH, columnDefinition);
 
                 // build the training pipeline
-                // merge PixelData columns (784) into one specialized Feature column
-                var pipeline = mlContext.Transforms.Concatenate(
-                    outputColumnName: DEFAULT_FEATURE_NAME,
-                    inputColumnNames: nameof(HandwrittenDigit.PixelData))
-
+                var pipeline =
                     // convert number column to keys
-                    .Append(mlContext.Transforms.Conversion.MapValueToKey("Number", nameof(HandwrittenDigit.Number)))
+                    Context.Transforms.Conversion.MapValueToKey(
+                        outputColumnName: DEFAULT_LABEL_NAME,
+                        inputColumnName: nameof(HandwrittenDigit.Number),
+                        keyOrdinality: ValueToKeyMappingEstimator.KeyOrdinality.ByValue
+                    )
+
+                    // merge PixelData columns (784) into one specialized Feature column
+                    .Append(Context.Transforms.Concatenate(
+                        outputColumnName: DEFAULT_FEATURE_NAME,
+                        inputColumnNames: nameof(HandwrittenDigit.PixelData)
+                    ))
 
                     // cache data for faster training
-                    .AppendCacheCheckpoint(mlContext)
+                    .AppendCacheCheckpoint(Context)
 
-                    // train using SDCA algorithm
-                    .Append(mlContext.MulticlassClassification.Trainers.SdcaNonCalibrated(
-                        labelColumnName: nameof(HandwrittenDigit.Number),
-                        featureColumnName: DEFAULT_FEATURE_NAME
-                    )
+                    // train using SDCA algorithm (use default names)
+                    .Append(Context.MulticlassClassification.Trainers.SdcaNonCalibrated()
+
+                    // convert key back to value
+                    .Append(Context.Transforms.Conversion.MapKeyToValue(
+                        outputColumnName: nameof(HandwrittenDigit.Number),
+                        inputColumnName: DEFAULT_LABEL_NAME
+                    ))
                 );
 
                 // train the model
                 Console.WriteLine("Training model...");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                model = pipeline.Fit(train);
+                Transformer = pipeline.Fit(train);
                 watch.Stop();
                 Console.WriteLine($"Model took {(watch.ElapsedMilliseconds / 1000.0):#.###} seconds");
                 Console.WriteLine();
 
                 // save model locally
-                mlContext.Model.Save(model, train.Schema, SCHEMA_MODEL_PATH);
+                Context.Model.Save(Transformer, train.Schema, SCHEMA_MODEL_PATH);
                 Console.WriteLine("Model saved at: " + ENV_SCHEMA_MODEL_PATH);
                 Console.WriteLine();
 
                 // make predictions on test data
                 Console.WriteLine("Evaluating model...");
-                var predictions = model.Transform(test);
+                var predictions = Transformer.Transform(test);
 
                 // evaluate predictions
-                var metrics = mlContext.MulticlassClassification.Evaluate(
+                var metrics = Context.MulticlassClassification.Evaluate(
                     data: predictions,
-                    labelColumnName: "Number"
+                    labelColumnName: nameof(HandwrittenDigit.Number)
                 );
 
                 // show evaluation metrics
@@ -104,8 +128,6 @@ namespace MNIST {
                 Console.WriteLine($" LogLossReduction: {metrics.LogLossReduction:#.###}");
                 Console.ReadLine();
             }
-
-            return mlContext;
         }
 
         /// <summary>
@@ -129,7 +151,7 @@ namespace MNIST {
             var dataView = context.Data.LoadFromTextFile(
                 path: dataPath,
                 columns: columnDefinition,
-                hasHeader: false,
+                hasHeader: true,
                 separatorChar: ','
             );
 

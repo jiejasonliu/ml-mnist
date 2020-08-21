@@ -14,10 +14,10 @@ namespace MNIST {
     /// An input is provided by the actual digit (0) and pixel data (1...784),
     /// where the label (digit) is mutually exclusive and can only be (0...9).
     /// </summary>
-    class HandwrittenDigit {
+    public class HandwrittenDigit {
         // use float type to minimize memory cost //
 
-        [ColumnName("Number"), LoadColumn(0)]
+        [LoadColumn(0)]
         public float Number = default;
 
         [ColumnName("PixelData"), LoadColumn(1, 784)]
@@ -26,9 +26,13 @@ namespace MNIST {
 
     }
 
-    class HandwrittenDigitPrediction {
+    /// <summary>
+    /// Represents the prediction of the trained network when provided an input (features).
+    /// </summary>
+    public class HandwrittenDigitPrediction {
+
         [ColumnName("Score")]
-        public float PredictedNumber { get; set; }
+        public float[] Score { get; set; }
     }
 
 }

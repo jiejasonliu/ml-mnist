@@ -1,7 +1,12 @@
-﻿using System;
+﻿using Microsoft.ML;
+using MNIST;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace MNIST_WF {
@@ -39,17 +44,50 @@ namespace MNIST_WF {
         }
 
         private void Evaluate_Click(object sender, EventArgs e) {
+            // scale bitmap to MNIST standards
             var bitmap = new BitmapData(bmp);
             bitmap.HDScale(28, 28);
 
-            var data = bitmap.ToFloatArray();
+            // convert bitmap to dataset
+            var data = new HandwrittenDigit {
+                PixelData = bitmap.ToFloatArray()
+            };
+
+            // train model (load from file if model exists)
+            MNISTModel model = new MNISTModel();
+            model.Train();
+
+            // create PredictionEngine
+            PredictionWrapper<HandwrittenDigit, HandwrittenDigitPrediction> wrapper =
+                new PredictionWrapper<HandwrittenDigit, HandwrittenDigitPrediction>(model.Context, model.Transformer);
+            wrapper.InitPredictionEngine();
+
+            // prediction result
+            HandwrittenDigitPrediction prediction;
+            wrapper.Predict(data, out prediction);
+
+            // find highest confidence
+            // find max score and retrieve number
+            int max = 0;
+            float maxScore = prediction.Score[0];
+
+            // iterate through all scoresto find max
+            for (int i = 1; i < 10; i++) {
+                // update max under correct condition
+                if (prediction.Score[i] > maxScore) {
+                    max = i;
+                    maxScore = prediction.Score[i];
+                }
+            }
+
+            PredictionLabel.Text = max.ToString();
         }
 
         private void FreeDrawBox_MouseDown(object sender, MouseEventArgs e) {
             lastPoint = e.Location;
             mouseActive = true;
         }
-
+        
         private void FreeDrawBox_MouseUp(object sender, MouseEventArgs e) {
             mouseActive = false;
         }

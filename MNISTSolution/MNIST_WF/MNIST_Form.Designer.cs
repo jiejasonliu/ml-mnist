@@ -26,7 +26,7 @@
             this.FreeDrawBox = new System.Windows.Forms.PictureBox();
             this.Clear = new System.Windows.Forms.Button();
             this.Evaluate = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.PredictionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.FreeDrawBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,22 +62,22 @@
             this.Evaluate.UseVisualStyleBackColor = true;
             this.Evaluate.Click += new System.EventHandler(this.Evaluate_Click);
             // 
-            // label1
+            // PredictionLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(354, 108);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 32);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
+            this.PredictionLabel.AutoSize = true;
+            this.PredictionLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.PredictionLabel.Location = new System.Drawing.Point(383, 110);
+            this.PredictionLabel.Name = "PredictionLabel";
+            this.PredictionLabel.Size = new System.Drawing.Size(44, 32);
+            this.PredictionLabel.TabIndex = 2;
+            this.PredictionLabel.Text = "---";
             // 
             // MNIST_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(535, 275);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.PredictionLabel);
             this.Controls.Add(this.Evaluate);
             this.Controls.Add(this.Clear);
             this.Controls.Add(this.FreeDrawBox);
@@ -94,7 +94,7 @@
         private System.Windows.Forms.PictureBox FreeDrawBox;
         private System.Windows.Forms.Button Clear;
         private System.Windows.Forms.Button Evaluate;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label PredictionLabel;
     }
 }
 
