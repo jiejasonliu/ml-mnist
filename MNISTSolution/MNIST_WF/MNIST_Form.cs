@@ -44,9 +44,9 @@ namespace MNIST_WF {
         }
 
         private void Evaluate_Click(object sender, EventArgs e) {
-            // scale bitmap to MNIST standards
-            var bitmap = new BitmapData(bmp);
-            bitmap.HDScale(28, 28);
+            // preprocess bitmap
+            var preprocessed = new BitmapPreprocessor(bmp).PreprocessImage();
+            var bitmap = new BitmapData(preprocessed);
 
             // convert bitmap to dataset
             var data = new HandwrittenDigit {
@@ -80,6 +80,7 @@ namespace MNIST_WF {
                 }
             }
 
+            // update output label
             PredictionLabel.Text = max.ToString();
         }
 

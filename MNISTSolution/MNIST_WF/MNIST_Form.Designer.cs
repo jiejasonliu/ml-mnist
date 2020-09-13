@@ -44,7 +44,7 @@
             // 
             // Clear
             // 
-            this.Clear.Location = new System.Drawing.Point(201, 143);
+            this.Clear.Location = new System.Drawing.Point(201, 164);
             this.Clear.Name = "Clear";
             this.Clear.Size = new System.Drawing.Size(75, 23);
             this.Clear.TabIndex = 1;
@@ -54,7 +54,7 @@
             // 
             // Evaluate
             // 
-            this.Evaluate.Location = new System.Drawing.Point(201, 172);
+            this.Evaluate.Location = new System.Drawing.Point(201, 135);
             this.Evaluate.Name = "Evaluate";
             this.Evaluate.Size = new System.Drawing.Size(75, 23);
             this.Evaluate.TabIndex = 1;
