@@ -1,10 +1,8 @@
-﻿using CNTK;
-using Microsoft.ML;
+﻿using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Transforms;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +12,6 @@ namespace MNIST {
 
         // executable (DLL) folder
         private static readonly string DLL_DIRECTORY_PATH = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
 
         // dataset path
         public static readonly string TRAIN_DATA_PATH = Path.Combine(DLL_DIRECTORY_PATH, "mnist_train.csv");
