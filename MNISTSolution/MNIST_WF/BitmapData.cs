@@ -27,7 +27,6 @@ namespace MNIST_WF {
             float scale = Math.Min((width / bitmap.Width), (height / bitmap.Height));
 
             bitmap = new Bitmap(bitmap, (int)width, (int)height);
-            bitmap.Save("test.png");
         }
 
         /// <summary>
@@ -55,7 +54,6 @@ namespace MNIST_WF {
             }
 
             bitmap = destBitmap;
-            bitmap.Save("test_hd.png");
         }
 
 
